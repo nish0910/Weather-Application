@@ -1,2 +1,143 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+Html section-
+
+<!DOCTYPE html>
+<html>
+  <title>Weather app</title>
+    <a target="_blank" href="https://home.openweathermap.org/users/sign_up"></a>
+
+<body>
+  <div class= heading>
+  <h1 style="color:white;"> Weather app🌞</h1>
+  <div class = contain >
+  <form id="form"> 
+  <input type="search" id="query" name="q" placeholder="Enter place">
+    <button>Search</button>
+</form>
+    </div>
+  <section class="ajax-section">
+    <div class="container">
+      <ul class="cities"></ul>
+    </div>
+  </section>
+</body>
+
+</html>
+
+
+CSS section--
+
+button {
+  background-color: red; 
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+}
+body {
+  align-items:center;
+  justify-content:center;
+  background-image: url("");
+  background: #1b2932;
+  background: -webkit-linear-gradient(to left, #8f94fb, #4e54c8); 
+}
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}  
+ .heading {
+    font-weight: bold;
+    font-size: 2rem;
+    letter-spacing: 0.02em;
+    padding: 0 0 30px 0;
+  }
+.form{
+  font-size:2rem;
+  padding : 0 0 20px 0;
+  height:30px
+}
+  
+  .ajax-section .cities {
+    display: grid;
+    grid-gap: 25px 20px;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .ajax-section .city {
+    position: relative;
+    padding: 10px 10%;
+    border-radius: 50px;
+    background: white;
+    color: black;
+  }
+  
+  .ajax-section .city::after {
+    content: '';
+    width: 40%;
+    height: 50px;
+    position: absolute;
+    bottom: -10px;
+    left: 5%;
+    z-index: -1;
+    opacity: 0.3;
+    border-radius: 20px;
+    background: var(--text_light);
+  }
+ .ajax-section .city-temp {
+    font-size: 4rem;
+    font-weight: bold;
+    margin-top: 10px;
+    color: ;
+  }
+  
+  .ajax-section .city sup {
+    font-size: 0.5em;
+  }
+ 
+ 
+  
+  Javascript section--
+  const form = document.querySelector(".contain form");
+const input = document.querySelector(".contain input");
+const list = document.querySelector(".ajax-section .cities");
+const apiKey = "d4d263f5de9d358d95069c19e8f183a4";
+
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  let inputVal = input.value;
+
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${inputVal}&appid=${apiKey}&units=metric`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      const { main, name, sys, weather } = data;
+      const icon = `https://s3-us-west-2.amazonaws.com/s.cdpn.io/162656/${
+        weather[0]["icon"]
+      }.svg`;
+
+      const li = document.createElement("li");
+      li.classList.add("city");
+      const markup = `
+        <h2 class="city-name" data-name="${name},${sys.country}">
+          <span>${name}</span>
+          <sup>${sys.country}</sup>
+        </h2>
+        <div class="city-temp">${Math.round(main.temp)}<sup>°C</sup></div>
+        <figure>
+          <img class="city-icon" src="${icon}" alt="${
+        weather[0]["description"]
+      }">
+          <figcaption>${weather[0]["description"]}</figcaption>
+        </figure>
+      `;
+      li.innerHTML = markup;
+      list.appendChild(li);
+    })
+  form.reset();
+  input.focus();
+});
